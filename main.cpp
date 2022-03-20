@@ -414,6 +414,7 @@ print_payload(const u_char *payload, int len)
 /*
  * dissect/print packet
  */
+long long payloadCount = 0;
 void
 got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
 {
@@ -493,10 +494,11 @@ got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet)
      * treat it as a string.
      */
     if (size_payload > 0) {
+        payloadCount+=size_payload;
         printf("   Payload (%d bytes):\n", size_payload);
         print_payload(payload, size_payload);
     }
-
+    printf("tatol:%lld",payloadCount);
     return;
 }
 
@@ -507,11 +509,11 @@ int main(int argc, char **argv)
     char errbuf[PCAP_ERRBUF_SIZE];		/* error buffer */
     pcap_t *handle;				/* packet capture handle */
 
-    char filter_exp[] = "ip";		/* filter expression [3] */
+    char filter_exp[] = "ip and port 9000";		/* filter expression [3] */
     struct bpf_program fp;			/* compiled filter program (expression) */
     bpf_u_int32 mask;			/* subnet mask */
     bpf_u_int32 net;			/* ip */
-    int num_packets = 10;			/* number of packets to capture */
+    int num_packets = -1;			/* number of packets to capture */
 
     print_app_banner();
 
